@@ -3,11 +3,11 @@ autoload colors && colors
 # http://github.com/ehrenmurdick/config/blob/master/zsh/prompt.zsh
 
 git_branch() {
-  echo $(/usr/bin/git symbolic-ref HEAD 2>/dev/null | awk -F/ {'print $NF'})
+  echo $(/usr/local/bin/git symbolic-ref HEAD 2>/dev/null | awk -F/ {'print $NF'})
 }
 
 git_dirty() {
-  st=$(/usr/bin/git status 2>/dev/null | tail -n 1)
+  st=$(/usr/local/bin/git status 2>/dev/null | tail -n 1)
   if [[ $st == "" ]]
   then
     echo ""
@@ -22,13 +22,13 @@ git_dirty() {
 }
 
 git_prompt_info () {
- ref=$(/usr/bin/git symbolic-ref HEAD 2>/dev/null) || return
+ ref=$(/usr/local/bin/git symbolic-ref HEAD 2>/dev/null) || return
 # echo "(%{\e[0;33m%}${ref#refs/heads/}%{\e[0m%})"
  echo "${ref#refs/heads/}"
 }
 
 unpushed () {
-  /usr/bin/git cherry -v origin/$(git_branch) 2>/dev/null
+  /usr/local/bin/git cherry -v origin/$(git_branch) 2>/dev/null
 }
 
 need_push () {
@@ -72,12 +72,20 @@ directory_name(){
   echo "%{$fg_bold[cyan]%}%1/%\/%{$reset_color%}"
 }
 
-export PROMPT=$'\n$(rvm_prompt) in $(directory_name) $(git_dirty)$(need_push)\n› '
+if [ $UID -eq 0 ]; then NCOLOR="red"; else NCOLOR="white"; fi
+
+export PROMPT='%{$fg[$NCOLOR]%}%B%n%b%{$reset_color%}:%{$fg[blue]%}%B${PWD/#$HOME/~}/%b%{$reset_color%} $(git_dirty)$(need_push)%(!.#.) '
+
+#export PROMPT=$'\n%m at $(rvm_prompt) in $(collapse_pwd) $(git_dirty)$(need_push)\n› '
+#export PROMPT=$'\n$(rvm_prompt) in $(collapse_pwd) $(git_dirty)$(need_push)\n› '
+
 set_prompt () {
-  export RPROMPT="%{$fg_bold[grey]%}$(todo)%{$reset_color%}"
+  export RPROMPT='%{$fg_bold[magenta]%}[%*]%{$reset_color%} Just do it'
+	
+  # export RPROMPT="%{$fg_bold[grey]%}$(todo)%{$reset_color%}"
 }
 
 precmd() {
-  title "zsh" "%m" "%55<...<%~"
+  title "zsh" "%m" "DIE %55<...<%~"
   set_prompt
 }

@@ -8,3 +8,10 @@ then
   alias ll="gls -l --color"
   alias la='gls -A --color'
 fi
+
+alias cd..="cd .."
+alias cls="clear"
+alias e="exit"
+alias ..="cd .."
+
+alias brews='brew list -1'
