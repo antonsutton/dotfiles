@@ -7,4 +7,6 @@ function t() {
   fi
 }
 
+export TODOTXT_DEFAULT_ACTION=ls
+alias t='todo.sh -d $HOME/Dropbox/tools/todo.cfg'
 alias n="t ls +next"

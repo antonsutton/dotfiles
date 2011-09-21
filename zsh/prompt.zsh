@@ -80,9 +80,7 @@ export PROMPT='%{$fg[$NCOLOR]%}%B%n%b%{$reset_color%}:%{$fg[blue]%}%B${PWD/#$HOM
 #export PROMPT=$'\n$(rvm_prompt) in $(collapse_pwd) $(git_dirty)$(need_push)\n› '
 
 set_prompt () {
-  export RPROMPT='%{$fg_bold[magenta]%}[%*]%{$reset_color%} Just do it'
-	
-  # export RPROMPT="%{$fg_bold[grey]%}$(todo)%{$reset_color%}"
+  export RPROMPT='%{$fg_bold[magenta]%}[%*]%{$reset_color%} Just do it: %{$fg_bold[white]%}$(todo)%{$reset_color%}'
 }
 
 precmd() {
