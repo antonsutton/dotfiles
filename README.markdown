@@ -2,35 +2,20 @@
 
 ## dotfiles
 
-These dotfiles are for z-shell. This comes with Mac OSX and you can install the latest version using - `brew install zsh`
+These dotfiles are for z-shell. This comes with Mac OSX and you can install the 
+latest version using - `brew install zsh`
 
-I use Mac OSX terminal or iTerm2 and have [Ethan Schoonover](http://ethanschoonover.com/solarized)'s 
-solarized color theme configured plus
+I use Mac OSX terminal and have [Ethan Schoonover](http://ethanschoonover.com/solarized)'s 
+solarized color theme configured.
 
-Basic steps to install all the dependencies I use to make terminal look and function how I like:
-
-1 - Download and install SIMBL
-2 - Download @timmfin's TerminalColors SIMBL bundle and install it to ~Library/Application Support/SIMBL/Plugins/ (create the directory if it doesn't exist)
-
-To theme OSX terminal you'll need to install:
-
-http://www.culater.net/software/SIMBL/SIMBL.php
-
-and then 
-
-A SIMBL plug-in for Terminal in Leopard which allows customisation of the text colours: https://github.com/timmfin/terminalcolours
+Useful extensions to install:
 
 - `brew install coreutils`
 - `brew install grc`
 
-Move word by word left and right in terminal change terminal settings to:
-
-x /y z
-
-
 ## How to install the dotfiles
 
-- `git clone git://github.com/damien7579/dotfiles ~/.dotfiles`
+- `git clone git://github.com/antonsutton/dotfiles ~/.dotfiles`
 - `cd ~/.dotfiles`
 - `rake install`
 
@@ -40,6 +25,11 @@ though.
 
 The main file you'll want to change right off the bat is `zsh/zshrc.symlink`,
 which sets up a few paths that'll be different on your particular machine.
+
+For a fresh install of OS X Snow Leopard or Lion you can setup some nice defaults:
+
+- cd osx
+- ./osdefaults.sh
 
 ## topical
 
@@ -53,5 +43,15 @@ symlinked without extension into `$HOME` when you run `rake install`.
 
 I forked [Zack Holman](http://github.com/holman)'s excellent [dotfiles](http://github.com/holman/dotfiles) 
 
+I used [Mathias Bynens](https://github.com/mathiasbynens/dotfiles/blob/master/.osx)'s OS X defaults for my own osxdefaults.sh file in the osx folder.
+
 I have also borrowed some tweaks and ideas from [Robby Russell](https://github.com/robbyrussell)'s 
 community-driven framework for managing your zsh configuration "[OH-MY-ZSH](https://github.com/robbyrussell/oh-my-zsh)"
+
+# Roger Buck
+
+Oh, and for the love of all that is simple, install [Brew](https://github.com/mxcl/homebrew). 
+Take ol' MacPorts and scruffy mangy Fink to the back of the old shed and send 
+them to digital heaven. Please.
+
+That is all. [Bidi Bidi](http://www.youtube.com/watch?feature=player_detailpage&v=FfzGayknSn4#t=76s)
