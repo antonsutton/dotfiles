@@ -1,6 +1,6 @@
-colorscheme molokai
+colorscheme solarized
 set anti
-set lines=999 columns=84
+set lines=999
 set guioptions=egmrt
 
 " Command + t to :CommandT
@@ -30,3 +30,9 @@ nmap <d-6> 6gt
 nmap <d-7> 7gt
 nmap <d-8> 8gt
 nmap <d-9> 9gt
+
+set guifont=Anonymous\ Pro:h18
+
+filetype plugin on
+set ofu=syntaxcomplete#Complete
+autocmd FileType python set

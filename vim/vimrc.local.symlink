@@ -27,6 +27,10 @@ let mapleader = ","
 " exit to normal mode with 'jj'
 inoremap jj <ESC>
 
+" Toogle nerdtree on F3
+nnoremap <F3> :NERDTreeToggle<CR>
+nnoremap <silent> <F4> :TlistToggle<CR>
+inoremap <C-space> <C-x><C-o>
 
 " reflow paragraph with Q in normal and visual mode
 nnoremap Q gqap
@@ -43,6 +47,14 @@ vnoremap <Down> gj
 vnoremap <Up> gk
 inoremap <Down> <C-o>gj
 inoremap <Up> <C-o>gk
+
+" Buffer navigation (Ctrl+Tab / Ctrl+Shift+Tab)
+nnoremap <C-Tab> :bnext<CR>
+nnoremap <C-S-Tab> :bprevious<CR>
+
+" Tab/shift-tab to indent/outdent in visual mode.
+vmap <Tab> >gv
+vmap <S-Tab> <gv
 
 " ----------------------------------------------------------------------------
 "  UI
@@ -83,3 +95,6 @@ function! StripWhitespace ()
     exec ':%s/ \+$//gc'
 endfunction
 map ,s :call StripWhitespace ()<CR>
+
+" Other plugin options
+set NERDChristmasTree=1

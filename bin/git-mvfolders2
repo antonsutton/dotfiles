@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+# $ git-mvfolders <folder> <match> <substring>
+
+puts "Please enter valid arguments\nUsage: git-mvfolders [folder] match substring"; exit!(1) unless (2..3).include?(ARGV.count)
+
+folder = "."
+
+folder = ARGV[0] if ARGV.count == 3
+match = ARGV[ARGV.count - 2]
+subs = ARGV[ARGV.count - 1]
+
+puts "Scanning folder '#{folder}' for #{match}"
+
+Dir.chdir folder
+Dir.glob("**/*").each do |x| 
+  newfolder = x.gsub(/#{match}/, subs)
+  if x != newfolder 
+    puts "#{x} => #{newfolder}"
+    # puts `git mv -n #{folder}/#{x} #{folder}/#{newfolder}`
+  end
+end 

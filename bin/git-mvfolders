@@ -1,0 +1,2 @@
+#!/bin/sh
+find $1 -depth -type d \( ! -iregex "\./\..*" ! -name  "." \) | while read file; do newname=`echo $file | sed 's/$2/$3/g'`; echo "$file" "$newname"; done

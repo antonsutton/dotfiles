@@ -1,2 +1,2 @@
 #export EDITOR='mvim'
-export EDITOR='mate -w'
+export EDITOR='subl -w'
