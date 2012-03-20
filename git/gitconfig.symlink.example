@@ -8,24 +8,28 @@
 # install this to the correct location by running the project's main `rake`
 # task.
 [user]
-        name = Zach Holman
-        email = your@example.com
+  name = Anton Sutton
+  email = <FILL>
 [alias]
-        co = checkout
-        promote = !$ZSH/bin/git-promote
-        wtf     = !$ZSH/bin/git-wtf
-        rank-contributers = !$ZSH/bin/git-rank-contributers
-        count   = !git shortlog -sn
+  co = checkout
+  count   = !git shortlog -sn
+[diff]
+  tool = diffmerge
+  wordRegex = .|[^[:space:]]
+[difftool "diffmerge"]
+  cmd = diffmerge $LOCAL $REMOTE
 [color]
-        diff = auto
-        status = auto
-        branch = auto
-[core]
-        excludesfile = ~/.gitignore
-        editor = mate -w
+  ui = true
+  diff = auto
+  status = auto
+  branch = auto
+[alias]
+  co = checkout
+  count   = !git shortlog -sn
 [apply]
-        whitespace = nowarn
-[github]
-        user = holman
+  whitespace = nowarn
+[core]
+  excludesfile = ~/.gitignore
+  editor = subl -w
 [mergetool]
-        keepBackup = false
+  keepBackup = false

@@ -13,5 +13,6 @@ alias cd..="cd .."
 alias cls="clear"
 alias e="exit"
 alias ..="cd .."
+alias dir="ll"
 
 alias brews='brew list -1'
