@@ -10,3 +10,10 @@ ln -s "$ZSH/sublime2/User" "$sublime_dir"
 # Grab the Soda theme
 cd "$sublime_dir"
 git clone https://github.com/buymeasoda/soda-theme/ "Theme - Soda"
+
+curl -L --create-dirs --output "colors-solarized/Solarized (dark).tmTheme" https://github.com/altercation/solarized/raw/master/textmate-colors-solarized/Solarized%20(dark).tmTheme
+
+if [ -e "~/Library/Fonts/Anonymous Pro.ttf" ]
+then
+  cp $ZSH/fonts/Anonymous* ~/Library/Fonts/
+fi

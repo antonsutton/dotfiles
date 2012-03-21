@@ -1,0 +1,18 @@
+{
+	"auto_complete_commit_on_tab": true,
+	//"theme": "Soda Dark.sublime-theme",
+  "color_scheme": "Packages/colors-solarized/Solarized (dark).tmTheme",
+	"dictionary": "Packages/Language - English/en_GB.dic",
+	"font_face": "Anonymous Pro",
+	"font_size": 18,
+  "match_brackets_angle": true,
+  "match_brackets_braces": true,
+  "match_brackets_square": true,
+  "rulers": [ 80 ],
+  "trim_trailing_white_space_on_save": true,
+  "highlight_modified_tabs": true,
+  // The number of spaces a tab is considered equal to
+  "tab_size": 2,
+  // Set to true to insert spaces when tab is pressed
+  "translate_tabs_to_spaces": true
+}   

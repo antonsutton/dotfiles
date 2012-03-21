@@ -1,0 +1,12 @@
+{
+	"auto_upgrade_last_run": 1332324586,
+	"installed_packages":
+	[
+		"Package Control",
+		"rbenv",
+		"RubyTest",
+		"SublimeCodeIntel",
+		"SublimeLinter",
+		"ZenCoding"
+	]
+}
