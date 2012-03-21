@@ -1,0 +1,7 @@
+#!/bin/sh
+#
+# Usage: git-compare somebranch otherbranch filename
+#
+# Diffs a file in two branches
+
+git difftool $1:$3 $2:$3
