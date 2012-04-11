@@ -2,6 +2,8 @@
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$PROJECTS
 
+export DEVELOPMENT=
+
 export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python2.7
 export PIP_VIRTUALENV_BASE=$WORKON_HOME
 export PIP_RESPECT_VIRTUALENV=true

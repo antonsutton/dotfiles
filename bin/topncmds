@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+puts `history`
+
+items = "10"
+
+items = ARGV[0] if ARGV.count == 1
+
+puts "Showing history for#{items}"
+
+Dir.chdir folder
+Dir.glob("**/*").each do |x|
+  newfolder = x.gsub(/#{match}/, subs)
+  if x != newfolder
+    puts "#{x} => #{newfolder}"
+    `git mv #{folder}/#{x} #{folder}/#{newfolder}`
+  end
+end
+
+#!/bin/sh
+
+if test "$1" == ""
+then
+  lines="10"
+else
+  lines="$1"
+fi
+
+echo "-$lines"
+
+history| awk '{print $2}' | sort | uniq -c | sort -rn #| head -10
+

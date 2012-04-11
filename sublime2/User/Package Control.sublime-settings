@@ -1,7 +1,8 @@
 {
-	"auto_upgrade_last_run": 1332324586,
+	"auto_upgrade_last_run": 1334124863,
 	"installed_packages":
 	[
+		"IPython Integration",
 		"Package Control",
 		"rbenv",
 		"RubyTest",

@@ -13,10 +13,10 @@ subs = ARGV[ARGV.count - 1]
 puts "Scanning folder '#{folder}' for #{match}"
 
 Dir.chdir folder
-Dir.glob("**/*").each do |x| 
+Dir.glob("**/*").each do |x|
   newfolder = x.gsub(/#{match}/, subs)
-  if x != newfolder 
+  if x != newfolder
     puts "#{x} => #{newfolder}"
-    # puts `git mv -n #{folder}/#{x} #{folder}/#{newfolder}`
+    puts `git mv #{folder}/#{x} #{folder}/#{newfolder}`
   end
-end 
+end
