@@ -1,18 +1,33 @@
 {
 	"auto_complete_commit_on_tab": true,
-	//"theme": "Soda Dark.sublime-theme",
-  "color_scheme": "Packages/colors-solarized/Solarized (dark).tmTheme",
+	"bold_folder_labels": true,
+	"caret_style": "phase",
+	"color_scheme": "Packages/colors-solarized/Solarized (dark).tmTheme",
 	"dictionary": "Packages/Language - English/en_GB.dic",
-	"font_face": "Anonymous Pro",
-	"font_size": 18,
-  "match_brackets_angle": true,
-  "match_brackets_braces": true,
-  "match_brackets_square": true,
-  "rulers": [ 80 ],
-  "trim_trailing_white_space_on_save": true,
-  "highlight_modified_tabs": true,
-  // The number of spaces a tab is considered equal to
-  "tab_size": 2,
-  // Set to true to insert spaces when tab is pressed
-  "translate_tabs_to_spaces": true
-}   
+	"draw_white_space": "all",
+	"find_selected_text": true,
+	"font_face": "Ubuntu Mono",
+	"font_options":
+	[
+		"subpixel_antialias"
+	],
+	"font_size": 15.0,
+	"highlight_line": true,
+	"highlight_modified_tabs": true,
+	"ignored_packages":
+	[
+		"Vintage"
+	],
+	"match_brackets_angle": true,
+	"match_brackets_braces": true,
+	"match_brackets_square": true,
+	"rulers":
+	[
+		73,
+		80
+	],
+	"scroll_past_end": true,
+	"tab_size": 2,
+	"translate_tabs_to_spaces": true,
+	"trim_trailing_white_space_on_save": true
+}

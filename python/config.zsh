@@ -13,4 +13,4 @@ else
   echo "WARNING: Can't find virtualenvwrapper.sh"
 fi
 
-eval "`pip completion --zsh `"
+eval "`/usr/local/share/python/pip completion --zsh `"

@@ -1,2 +1,8 @@
 [
+  { "keys": ["ctrl+shift+d"], "command": "file_diff_menu" },
+  { "keys": ["shift+f1", "ctrl+f1"], "command": "python_get_documentation", "context":
+    [
+        { "key": "selector", "operator": "equal", "operand": "source.python" }
+    ]
+  }
 ]
