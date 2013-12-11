@@ -2,13 +2,9 @@
 	"auto_upgrade_last_run": null,
 	"installed_packages":
 	[
-		"Emmet",
-		"IPython Integration",
 		"LESS",
-		"LESS-build",
-		"Live CSS",
 		"Package Control",
-		"SublimeCodeIntel",
+		"Python PEP8 Autoformat",
 		"SublimeLinter",
 		"SublimeRope",
 		"VBScript"

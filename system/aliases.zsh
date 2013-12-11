@@ -16,3 +16,5 @@ alias ..="cd .."
 alias dir="ll"
 
 alias brews='brew list -1'
+
+alias fixsys='killall -KILL Finder & sudo pkill coreaudiod & sudo pkill pboard  && launchctl start com.apple.pboard'
