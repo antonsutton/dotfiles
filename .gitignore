@@ -1,2 +1,13 @@
-vim/vim.symlink/.netrwhist
+atom.symlink/.apm
+atom.symlink/.node-gyp
+atom.symlink/.storage
+atom.symlink/compile-cache/
+atom.symlink/packages
+atom.symlink/storage
+atom.symlink/themes
+
 git/gitconfig.symlink
+
+vim/vim.symlink/.netrwhist
+
+antigen

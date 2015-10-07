@@ -1,0 +1,438 @@
+#!/usr/bin/env bash
+#
+# bootstrap installs things.
+set -e
+
+source $(dirname $0)/lib  
+
+cd "$(dirname "$0")/.."
+DOTFILES_ROOT=$(pwd)
+
+echo ''
+
+setup_gitconfig () {
+  if ! [ -f git/gitconfig.symlink ]
+  then
+    running 'setup gitconfig'
+
+    git_credential='cache'
+    if [ "$(uname -s)" == "Darwin" ]
+    then
+      git_credential='osxkeychain'
+    fi
+
+    echo -e  ' - What is your github author name?'
+    read -e git_authorname
+    echo -e  ' - What is your github author email?'
+    read -e git_authoremail
+
+    sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" git/gitconfig.symlink.example > git/gitconfig.symlink
+
+    bot 'gitconfig'
+  fi
+}
+
+
+link_file () {
+  local src=$1 dst=$2
+
+  local overwrite= backup= skip=
+  local action=
+
+  if [ -f "$dst" -o -d "$dst" -o -L "$dst" ]
+  then
+
+    if [ "$overwrite_all" == "false" ] && [ "$backup_all" == "false" ] && [ "$skip_all" == "false" ]
+    then
+
+      local currentSrc="$(readlink $dst)"
+
+      if [ "$currentSrc" == "$src" ]
+      then
+
+        skip=true;
+
+      else
+
+        echo -e  "File already exists: $dst ($(basename "$src")), what do you want to do?\n\
+        [s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?"
+        read -n 1 action
+
+        case "$action" in
+          o )
+            overwrite=true;;
+          O )
+            overwrite_all=true;;
+          b )
+            backup=true;;
+          B )
+            backup_all=true;;
+          s )
+            skip=true;;
+          S )
+            skip_all=true;;
+          * )
+            ;;
+        esac
+
+      fi
+
+    fi
+
+    overwrite=${overwrite:-$overwrite_all}
+    backup=${backup:-$backup_all}
+    skip=${skip:-$skip_all}
+
+    if [ "$overwrite" == "true" ]
+    then
+      rm -rf "$dst"
+      bot "removed $dst"
+    fi
+
+    if [ "$backup" == "true" ]
+    then
+      mv "$dst" "${dst}.backup"
+      bot "moved $dst to ${dst}.backup"
+    fi
+
+    if [ "$skip" == "true" ]
+    then
+      bot "skipped $src"
+    fi
+  fi
+
+  if [ "$skip" != "true" ]  # "false" or empty
+  then
+    ln -s "$1" "$2"
+    bot "linked $1 to $2"
+  fi
+}
+
+install_brew() {
+  bot "checking sudo state..."
+  if sudo grep -q "# %wheel\tALL=(ALL) NOPASSWD: ALL" "/etc/sudoers"; then
+
+    promptSudo
+
+    bot "Do you want me to setup this machine to allow you to run sudo without a password?\nPlease read here to see what I am doing:\nhttp://wiki.summercode.com/sudo_without_a_password_in_mac_os_x \n"
+
+    read -r -p "Make sudo passwordless? [y|N] " response
+
+    if [[ $response =~ (yes|y|Y) ]];then
+        sed --version
+        if [[ $? == 0 ]];then
+            sudo sed -i 's/^#\s*\(%wheel\s\+ALL=(ALL)\s\+NOPASSWD:\s\+ALL\)/\1/' /etc/sudoers
+        else
+            sudo sed -i '' 's/^#\s*\(%wheel\s\+ALL=(ALL)\s\+NOPASSWD:\s\+ALL\)/\1/' /etc/sudoers
+        fi
+        sudo dscl . append /Groups/wheel GroupMembership $(whoami)
+        bot "You can now run sudo commands without password!"
+    fi
+  fi
+  ok
+
+  #####
+  # install homebrew
+  #####
+
+  running "checking homebrew install"
+  brew_bin=$(which brew) 2>&1 > /dev/null
+  if [[ $? != 0 ]]; then
+    action "installing homebrew"
+      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+      if [[ $? != 0 ]]; then
+        error "unable to install homebrew, script $0 abort!"
+        exit -1
+    fi
+  fi
+  ok
+
+  running "checking brew-cask install"
+  output=$(brew tap | grep cask)
+  if [[ $? != 0 ]]; then
+    action "installing brew-cask"
+    require_brew caskroom/cask/brew-cask
+  fi
+  ok
+
+  ###############################################################################
+  #Install command-line tools using Homebrew                                    #
+  ###############################################################################
+  # Make sure we’re using the latest Homebrew
+  running "updating homebrew"
+  brew update
+  ok
+
+  bot "before installing brew packages, we can upgrade any outdated packages."
+  read -r -p "run brew upgrade? [y|N] " response
+  if [[ $response =~ ^(y|yes|Y) ]];then
+      # Upgrade any already-installed formulae
+      action "upgrade brew packages..."
+      brew upgrade
+      ok "brews updated..."
+  else
+      ok "skipped brew package upgrades.";
+  fi
+
+  bot "installing homebrew command-line tools"
+
+  require_brew grc 
+  require_brew spark
+  # Install GNU core utilities (those that come with OS X are outdated)
+  # Don’t forget to add `$(brew --prefix coreutils)/libexec/gnubin` to `$PATH`.
+  require_brew coreutils
+  # Install some other useful utilities like `sponge`
+  # require_brew moreutils
+  # Install GNU `find`, `locate`, `updatedb`, and `xargs`, `g`-prefixed
+  require_brew findutils
+
+  # Install Bash 4
+  # Note: don’t forget to add `/usr/local/bin/bash` to `/etc/shells` before running `chsh`.
+  #install bash
+  #install bash-completion
+
+  # Install RingoJS and Narwhal
+  # Note that the order in which these are installed is important; see http://git.io/brew-narwhal-ringo.
+  #install ringojs
+  #install narwhal
+
+  # require_brew zsh-completions
+  require_brew antigen
+  # Install other useful binaries
+  require_brew ack
+  # Beanstalk http://kr.github.io/beanstalkd/
+  #require_brew beanstalkd
+  # ln -sfv /usr/local/opt/beanstalk/*.plist ~/Library/LaunchAgents
+  # launchctl load ~/Library/LaunchAgents/homebrew.mxcl.beanstalk.plist
+
+  # docker setup:
+  # require_brew boot2docker
+
+  # dos2unix converts windows newlines to unix newlines
+  # require_brew dos2unix
+  # fortune command--I source this as a better motd :)
+  # require_brew fortune
+  # require_brew gawk
+  # http://www.lcdf.org/gifsicle/ (because I'm a gif junky)
+  # require_brew gifsicle
+  # skip those GUI clients, git command-line all the way
+  require_brew git
+  # yes, yes, use git-flow, please :)
+  require_brew git-flow
+  # why is everyone still not using GPG?
+  # require_brew gnupg
+  # Install GNU `sed`, overwriting the built-in `sed`
+  # so we can do "sed -i 's/foo/bar/' file" instead of "sed -i '' 's/foo/bar/' file"
+  require_brew gnu-sed --default-names
+  require_brew go
+  # better, more recent grep
+  require_brew homebrew/dupes/grep
+  # require_brew hub
+  require_brew imagemagick
+  # require_brew imagesnap
+  require_brew python
+  # jq is a JSON grep
+  # require_brew jq
+  # http://maven.apache.org/
+  # require_brew maven
+  # require_brew memcached
+  # require_brew nmap
+  # require_brew node
+  require_brew nvm
+  # require_brew redis
+  # better/more recent version of screen
+  require_brew homebrew/dupes/screen
+  require_brew tig
+  require_brew tree
+  require_brew ttyrec
+  # better, more recent vim
+  require_brew vim --override-system-vi
+  require_brew watch
+  # Install wget with IRI support
+  require_brew wget --enable-iri
+
+  # bot "if you would like to start memcached at login, run this:"
+  # echo "ln -sfv /usr/local/opt/memcached/*.plist ~/Library/LaunchAgents"
+  # bot "if you would like to start memcached now, run this:"
+  # echo "launchctl load ~/Library/LaunchAgents/homebrew.mxcl.memcached.plist"
+}
+
+install_npm() {
+  # nvm
+  require_nvm stable
+
+
+  ###############################################################################
+  bot "NPM Globals..."
+  ###############################################################################
+
+  require_npm antic
+  require_npm bower
+  require_npm bower-check-updates
+  require_npm npm-check
+  # http://ionicframework.com/
+  # require_npm cordova
+  # require_npm ionic
+  # require_npm yo
+  # https://github.com/markdalgleish/bespoke.js
+  # require_npm generator-bespoke
+  # require_npm generator-dockerize
+  require_npm grunt
+  require_npm gulp
+  require_npm eslint
+  # http://devo.ps/blog/goodbye-node-forever-hello-pm2/
+  # require_npm pm2
+  # require_npm prettyjson
+  # require_npm supervisor
+  # https://github.com/sindresorhus/trash
+  # require_npm trash
+  # https://github.com/MrRio/vtop
+  # require_npm vtop
+
+  ###############################################################################
+  # bot "Ruby Gems..."
+  ###############################################################################
+  # require_brew rbenv
+  # require_brew ruby-build
+  # eval "$(rbenv init -)"
+  # require_gem git-up
+}
+
+install_fonts() {
+  bot "installing fonts..."
+  brew tap caskroom/fonts > /dev/null 2>&1
+
+  require_cask font-anonymous-pro-for-powerline
+  require_cask font-ubuntu-mono-powerline.rb
+
+  curl -L --create-dirs --output "/tmp/Solarized Dark.itermcolors" https://github.com/altercation/solarized/raw/master/iterm2-colors-solarized/Solarized%20Dark.itermcolors
+  open "/tmp/Solarized Dark.itermcolors"
+
+  curl -L --create-dirs --output "/tmp/Solarized Dark.terminal"  https://github.com/tomislav/osx-terminal.app-colors-solarized/raw/master/Solarized%20Dark.terminal
+  open "/tmp/Solarized Dark.terminal"
+
+}
+
+install_apps() {
+  ###############################################################################
+  # Native Apps (via brew cask)                                                 #
+  ###############################################################################
+  bot "installing GUI tools via homebrew casks..."
+  brew tap caskroom/versions > /dev/null 2>&1
+  
+
+  # cloud storage
+  #require_cask amazon-cloud-drive
+  #require_cask box-sync
+  require_cask dropbox
+  require_cask evernote
+  #require_cask skydrive
+
+  # communication
+  #require_cask adium
+  # require_cask slack
+
+  # require_cask caffeine
+
+  # tools
+  #require_cask comicbooklover
+  require_cask diffmerge
+  #require_cask flash-player
+  require_cask github-desktop
+  # require_cask gpgtools
+  # require_cask ireadfast
+  require_cask iterm2
+  #require_cask macvim
+  #require_cask sizeup
+  #require_cask simple-comic
+  #require_cask sketchup
+
+  require_cask drobo-dashboard
+  require_cask teamviewer
+  require_cask skype
+  require_cask spectacle
+
+  require_cask qlcolorcode 
+  require_cask qlstephen 
+  require_cask qlmarkdown
+  require_cask quicklook-json
+  require_cask qlprettypatch
+  require_cask quicklook-csv 
+  require_cask betterzipql 
+  require_cask webpquicklook
+  require_cask suspicious-package 
+  
+  qlmanage -r
+
+  require_cask sublime-text
+
+  require_cask atom
+  require_apm linter
+  require_apm linter-eslint
+  require_apm atom-beautify
+
+  require_cask the-unarchiver
+  #require_cask transmission
+  require_cask vlc
+  require_cask xquartz
+
+  # development browsers
+  # require_cask breach
+  # require_cask firefox
+  #require_cask firefox-aurora
+  # require_cask google-chrome
+  # require_cask google-chrome-canary
+  # require_cask torbrowser
+
+  # virtal machines
+  # require_cask virtualbox
+  # chef-dk, berkshelf, etc
+  #require_cask chefdk
+  # vagrant for running dev environments using docker images
+  #require_cask vagrant # # | grep Caskroom | sed "s/.*'\(.*\)'.*/open \1\/Vagrant.pkg/g" | sh
+
+  # bot "Alright, cleaning up homebrew cache..."
+  # Remove outdated versions from the cellar
+  # brew cleanup > /dev/null 2>&1
+  # bot "All clean"
+
+}
+
+setup_misc() {
+  curl -L --create-dirs --output "$DOTFILES_ROOT/antigen/antigen.zsh" https://raw.githubusercontent.com/zsh-users/antigen/master/antigen.zsh > antigen.zsh
+}
+
+setup_osx() {
+  bot 'Setting up sensible OSX defaults...'
+  echo $0 | grep zsh > /dev/null 2>&1 | true
+  if [[ ${PIPESTATUS[1]} != 0 ]]; then
+    running "changing your login shell to zsh"
+    chsh -s $(which zsh);ok
+  else
+    bot "looks like you are already using zsh!"
+  fi
+}
+
+install_dotfiles () {
+  bot 'installing dotfiles'
+
+  local overwrite_all=false backup_all=false skip_all=false
+
+  for src in $(find -H "$DOTFILES_ROOT" -maxdepth 2 -name '*.symlink')
+  do
+    dst="$HOME/.$(basename "${src%.*}")"
+    link_file "$src" "$dst"
+  done
+}
+
+# setup_gitconfig
+install_dotfiles
+#install_brew
+#install_apps
+#install_fonts
+setup_misc
+setup_osx
+
+# echo ''
+bot 'All installed!'
+echo ''
