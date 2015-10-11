@@ -3,6 +3,11 @@ export CLICOLOR=true
 
 fpath=($ZSH/zsh/functions $fpath)
 
+if test -f $completion
+then
+  source $completion
+fi
+
 autoload -U $ZSH/zsh/functions/*(:t)
 
 HISTFILE=~/.zsh_history

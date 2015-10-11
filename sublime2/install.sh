@@ -17,7 +17,4 @@ curl -L --create-dirs --output "colors-solarized/Solarized (dark).tmTheme" https
 # Grab Package control http://wbond.net/sublime_packages/package_control
 curl -L --create-dirs --output "../Installed Packages/Package Control.sublime-package" http://sublime.wbond.net/Package%20Control.sublime-package
 
-if [ -e "~/Library/Fonts/Anonymous Pro.ttf" ]
-then
-  cp $ZSH/fonts/Anonymous* ~/Library/Fonts/
-fi
+brew cask install font-anonymous-pro
