@@ -42,3 +42,5 @@ export GREP_OPTIONS='--color=auto'
 export GREP_COLOR='1;32'
 
 [[ -s /Users/antonsutton/.nvm/nvm.sh ]] && . /Users/antonsutton/.nvm/nvm.sh # This loads NVM
+
+[[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh # Load autojump
