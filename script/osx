@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # include my library helpers for colorized echo and require_brew, etc
-source ./lib.sh
+source ./lib
 
 # Ask for the administrator password upfront
 
@@ -27,239 +27,6 @@ if sudo grep -q "# %wheel\tALL=(ALL) NOPASSWD: ALL" "/etc/sudoers"; then
 fi
 ok
 
-#####
-# install homebrew
-#####
-
-running "checking homebrew install"
-brew_bin=$(which brew) 2>&1 > /dev/null
-if [[ $? != 0 ]]; then
-	action "installing homebrew"
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    if [[ $? != 0 ]]; then
-    	error "unable to install homebrew, script $0 abort!"
-    	exit -1
-	fi
-fi
-ok
-
-running "checking brew-cask install"
-output=$(brew tap | grep cask)
-if [[ $? != 0 ]]; then
-	action "installing brew-cask"
-	require_brew caskroom/cask/brew-cask
-fi
-ok
-
-###############################################################################
-#Install command-line tools using Homebrew                                    #
-###############################################################################
-# Make sure we’re using the latest Homebrew
-running "updating homebrew"
-brew update
-ok
-
-bot "before installing brew packages, we can upgrade any outdated packages."
-read -r -p "run brew upgrade? [y|N] " response
-if [[ $response =~ ^(y|yes|Y) ]];then
-    # Upgrade any already-installed formulae
-    action "upgrade brew packages..."
-    brew upgrade
-    ok "brews updated..."
-else
-    ok "skipped brew package upgrades.";
-fi
-
-bot "installing homebrew command-line tools"
-
-
-# Install GNU core utilities (those that come with OS X are outdated)
-# Don’t forget to add `$(brew --prefix coreutils)/libexec/gnubin` to `$PATH`.
-require_brew coreutils
-# Install some other useful utilities like `sponge`
-require_brew moreutils
-# Install GNU `find`, `locate`, `updatedb`, and `xargs`, `g`-prefixed
-require_brew findutils
-
-# Install Bash 4
-# Note: don’t forget to add `/usr/local/bin/bash` to `/etc/shells` before running `chsh`.
-#install bash
-#install bash-completion
-
-# Install RingoJS and Narwhal
-# Note that the order in which these are installed is important; see http://git.io/brew-narwhal-ringo.
-#install ringojs
-#install narwhal
-
-
-# Install other useful binaries
-require_brew ack
-# Beanstalk http://kr.github.io/beanstalkd/
-#require_brew beanstalkd
-# ln -sfv /usr/local/opt/beanstalk/*.plist ~/Library/LaunchAgents
-# launchctl load ~/Library/LaunchAgents/homebrew.mxcl.beanstalk.plist
-
-# docker setup:
-# require_brew boot2docker
-
-# dos2unix converts windows newlines to unix newlines
-# require_brew dos2unix
-# fortune command--I source this as a better motd :)
-# require_brew fortune
-require_brew gawk
-# http://www.lcdf.org/gifsicle/ (because I'm a gif junky)
-# require_brew gifsicle
-# skip those GUI clients, git command-line all the way
-require_brew git
-# yes, yes, use git-flow, please :)
-require_brew git-flow
-# why is everyone still not using GPG?
-require_brew gnupg
-# Install GNU `sed`, overwriting the built-in `sed`
-# so we can do "sed -i 's/foo/bar/' file" instead of "sed -i '' 's/foo/bar/' file"
-require_brew gnu-sed --default-names
-require_brew go
-# better, more recent grep
-require_brew homebrew/dupes/grep
-require_brew hub
-require_brew imagemagick
-require_brew imagesnap
-require_brew python
-# jq is a JSON grep
-# require_brew jq
-# http://maven.apache.org/
-# require_brew maven
-# require_brew memcached
-# require_brew nmap
-# require_brew node
-require_brew nvm
-require_brew redis
-# better/more recent version of screen
-require_brew homebrew/dupes/screen
-require_brew tig
-require_brew tree
-require_brew ttyrec
-# better, more recent vim
-require_brew vim --override-system-vi
-require_brew watch
-# Install wget with IRI support
-require_brew wget --enable-iri
-
-# bot "if you would like to start memcached at login, run this:"
-# echo "ln -sfv /usr/local/opt/memcached/*.plist ~/Library/LaunchAgents"
-# bot "if you would like to start memcached now, run this:"
-# echo "launchctl load ~/Library/LaunchAgents/homebrew.mxcl.memcached.plist"
-
-# nvm
-require_nvm stable
-
-###############################################################################
-bot "NPM Globals..."
-###############################################################################
-
-require_npm antic
-require_npm bower
-require_npm bower-check-updates
-require_npm npm-check
-# http://ionicframework.com/
-# require_npm cordova
-# require_npm ionic
-# require_npm yo
-# https://github.com/markdalgleish/bespoke.js
-# require_npm generator-bespoke
-# require_npm generator-dockerize
-require_npm grunt
-require_npm gulp
-require_npm eslint
-# http://devo.ps/blog/goodbye-node-forever-hello-pm2/
-# require_npm pm2
-# require_npm prettyjson
-# require_npm supervisor
-# https://github.com/sindresorhus/trash
-# require_npm trash
-# https://github.com/MrRio/vtop
-# require_npm vtop
-
-###############################################################################
-bot "Ruby Gems..."
-###############################################################################
-require_brew rbenv
-require_brew ruby-build
-eval "$(rbenv init -)"
-require_gem git-up
-
-###############################################################################
-# Native Apps (via brew cask)                                                 #
-###############################################################################
-bot "installing GUI tools via homebrew casks..."
-brew tap caskroom/versions > /dev/null 2>&1
-
-# cloud storage
-#require_cask amazon-cloud-drive
-#require_cask box-sync
-require_cask dropbox
-require_cask evernote
-#require_cask skydrive
-
-# communication
-#require_cask adium
-# require_cask slack
-
-# require_cask caffeine
-
-# tools
-#require_cask comicbooklover
-require_cask diffmerge
-#require_cask flash-player
-require_cask github
-require_cask gpgtools
-# require_cask ireadfast
-require_cask iterm2
-#require_cask macvim
-#require_cask sizeup
-#require_cask simple-comic
-#require_cask sketchup
-
-require_cask drobo-dashboard
-require_cask teamviewer
-require_cask skype
-require_cask spectacle
-
-require_cask qlcolorcode qlstephen qlmarkdown quicklook-json qlprettypatch quicklook-csv betterzipql webp-quicklook suspicious-package
-qlmanage -r
-
-require_cask sublime-text
-
-require_cask atom
-require_apm linter
-require_apm linter-eslint
-require_apm atom-beautify
-
-require_cask the-unarchiver
-#require_cask transmission
-require_cask vlc
-require_cask xquartz
-
-
-# development browsers
-# require_cask breach
-# require_cask firefox
-#require_cask firefox-aurora
-# require_cask google-chrome
-# require_cask google-chrome-canary
-# require_cask torbrowser
-
-# virtal machines
-# require_cask virtualbox
-# chef-dk, berkshelf, etc
-#require_cask chefdk
-# vagrant for running dev environments using docker images
-#require_cask vagrant # # | grep Caskroom | sed "s/.*'\(.*\)'.*/open \1\/Vagrant.pkg/g" | sh
-
-# bot "Alright, cleaning up homebrew cache..."
-# Remove outdated versions from the cellar
-# brew cleanup > /dev/null 2>&1
-# bot "All clean"
 
 ###############################################################################
 bot "Configuring General System UI/UX..."
@@ -291,10 +58,10 @@ sudo pmset -a sms 0;ok
 ################################################
 
 # running "Set computer name (as done via System Preferences → Sharing)"
-sudo scutil --set ComputerName "mba"
-sudo scutil --set HostName "mba"
-sudo scutil --set LocalHostName "mba"
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "mba"
+sudo scutil --set ComputerName "bender"
+sudo scutil --set HostName "bender"
+sudo scutil --set LocalHostName "bender"
+sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "bender"
 
 # running "Disable smooth scrolling"
 # (Uncomment if you’re on an older Mac that messes up the animation)
@@ -403,8 +170,8 @@ running "Expand print panel by default"
 defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
 defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true;ok
 
-running "Save to disk (not to iCloud) by default"
-defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false;ok
+# running "Save to disk (not to iCloud) by default"
+# defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false;ok
 
 running "Automatically quit printer app once the print jobs complete"
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true;ok
@@ -505,12 +272,12 @@ defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false;o
 bot "Configuring the Screen"
 ###############################################################################
 
-running "Require password immediately after sleep or screen saver begins"
-defaults write com.apple.screensaver askForPassword -int 1
-defaults write com.apple.screensaver askForPasswordDelay -int 0;ok
+#running "Require password immediately after sleep or screen saver begins"
+#defaults write com.apple.screensaver askForPassword -int 1
+#defaults write com.apple.screensaver askForPasswordDelay -int 0;ok
 
-running "Save screenshots to the desktop"
-defaults write com.apple.screencapture location -string "${HOME}/Desktop";ok
+#running "Save screenshots to the desktop"
+#defaults write com.apple.screencapture location -string "${HOME}/Desktop";ok
 
 running "Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)"
 defaults write com.apple.screencapture type -string "png";ok
@@ -578,9 +345,9 @@ defaults write com.apple.frameworks.diskimages skip-verify-locked -bool true
 defaults write com.apple.frameworks.diskimages skip-verify-remote -bool true;ok
 
 running "Automatically open a new Finder window when a volume is mounted"
-defaults write com.apple.frameworks.diskimages auto-open-ro-root -bool true
-defaults write com.apple.frameworks.diskimages auto-open-rw-root -bool true
-defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true;ok
+#defaults write com.apple.frameworks.diskimages auto-open-ro-root -bool true
+#defaults write com.apple.frameworks.diskimages auto-open-rw-root -bool true
+#defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true;ok
 
 running "Use list view in all Finder windows by default"
 # Four-letter codes for the other view modes: `icnv`, `clmv`, `Flwv`
@@ -612,8 +379,8 @@ bot "Dock & Dashboard"
 running "Enable highlight hover effect for the grid view of a stack (Dock)"
 defaults write com.apple.dock mouse-over-hilite-stack -bool true;ok
 
-running "Set the icon size of Dock items to 36 pixels"
-defaults write com.apple.dock tilesize -int 36;ok
+#running "Set the icon size of Dock items to 36 pixels"
+#defaults write com.apple.dock tilesize -int 36;ok
 
 running "Change minimize/maximize window effect to scale"
 defaults write com.apple.dock mineffect -string "scale";ok
@@ -681,21 +448,21 @@ bot "Configuring Hot Corners"
 # 12: Notification Center
 
 running "Top left screen corner → Mission Control"
-defaults write com.apple.dock wvous-tl-corner -int 2
-defaults write com.apple.dock wvous-tl-modifier -int 0;ok
+#defaults write com.apple.dock wvous-tl-corner -int 2
+#defaults write com.apple.dock wvous-tl-modifier -int 0;ok
 running "Top right screen corner → Desktop"
-defaults write com.apple.dock wvous-tr-corner -int 4
-defaults write com.apple.dock wvous-tr-modifier -int 0;ok
+#defaults write com.apple.dock wvous-tr-corner -int 4
+#defaults write com.apple.dock wvous-tr-modifier -int 0;ok
 running "Bottom right screen corner → Start screen saver"
-defaults write com.apple.dock wvous-br-corner -int 5
-defaults write com.apple.dock wvous-br-modifier -int 0;ok
+#defaults write com.apple.dock wvous-br-corner -int 5
+#defaults write com.apple.dock wvous-br-modifier -int 0;ok
 
 ###############################################################################
 bot "Configuring Safari & WebKit"
 ###############################################################################
 
-running "Set Safari’s home page to ‘about:blank’ for faster loading"
-defaults write com.apple.Safari HomePage -string "about:blank";ok
+#running "Set Safari’s home page to ‘about:blank’ for faster loading"
+#defaults write com.apple.Safari HomePage -string "about:blank";ok
 
 running "Prevent Safari from opening ‘safe’ files automatically after downloading"
 defaults write com.apple.Safari AutoOpenSafeDownloads -bool false;ok
@@ -710,7 +477,7 @@ running "Hide Safari’s sidebar in Top Sites"
 defaults write com.apple.Safari ShowSidebarInTopSites -bool false;ok
 
 running "Disable Safari’s thumbnail cache for History and Top Sites"
-defaults write com.apple.Safari DebugSnapshotsUpdatePolicy -int 2;ok
+#defaults write com.apple.Safari DebugSnapshotsUpdatePolicy -int 2;ok
 
 running "Enable Safari’s debug menu"
 defaults write com.apple.Safari IncludeInternalDebugMenu -bool true;ok
@@ -764,29 +531,29 @@ bot "Spotlight"
 
 running "Disable Spotlight indexing for any volume that gets mounted and has not yet been indexed"
 # Use `sudo mdutil -i off "/Volumes/foo"` to stop indexing any volume.
-sudo defaults write /.Spotlight-V100/VolumeConfiguration Exclusions -array "/Volumes";ok
-running "Change indexing order and disable some file types from being indexed"
-defaults write com.apple.spotlight orderedItems -array \
-	'{"enabled" = 1;"name" = "APPLICATIONS";}' \
-	'{"enabled" = 1;"name" = "SYSTEM_PREFS";}' \
-	'{"enabled" = 1;"name" = "DIRECTORIES";}' \
-	'{"enabled" = 1;"name" = "PDF";}' \
-	'{"enabled" = 1;"name" = "FONTS";}' \
-	'{"enabled" = 1;"name" = "DOCUMENTS";}' \
-	'{"enabled" = 1;"name" = "MESSAGES";}' \
-	'{"enabled" = 1;"name" = "CONTACT";}' \
-	'{"enabled" = 0;"name" = "EVENT_TODO";}' \
-	'{"enabled" = 1;"name" = "IMAGES";}' \
-	'{"enabled" = 0;"name" = "BOOKMARKS";}' \
-	'{"enabled" = 0;"name" = "MUSIC";}' \
-	'{"enabled" = 0;"name" = "MOVIES";}' \
-	'{"enabled" = 0;"name" = "PRESENTATIONS";}' \
-	'{"enabled" = 1;"name" = "SPREADSHEETS";}' \
-	'{"enabled" = 0;"name" = "SOURCE";}';ok
-running "Load new settings before rebuilding the index"
-killall mds > /dev/null 2>&1;ok
-running "Make sure indexing is enabled for the main volume"
-sudo mdutil -i on / > /dev/null;ok
+# sudo defaults write /.Spotlight-V100/VolumeConfiguration Exclusions -array "/Volumes";ok
+# running "Change indexing order and disable some file types from being indexed"
+# defaults write com.apple.spotlight orderedItems -array \
+# 	'{"enabled" = 1;"name" = "APPLICATIONS";}' \
+# 	'{"enabled" = 1;"name" = "SYSTEM_PREFS";}' \
+# 	'{"enabled" = 1;"name" = "DIRECTORIES";}' \
+# 	'{"enabled" = 1;"name" = "PDF";}' \
+# 	'{"enabled" = 1;"name" = "FONTS";}' \
+# 	'{"enabled" = 1;"name" = "DOCUMENTS";}' \
+# 	'{"enabled" = 1;"name" = "MESSAGES";}' \
+# 	'{"enabled" = 1;"name" = "CONTACT";}' \
+# 	'{"enabled" = 0;"name" = "EVENT_TODO";}' \
+# 	'{"enabled" = 1;"name" = "IMAGES";}' \
+# 	'{"enabled" = 0;"name" = "BOOKMARKS";}' \
+# 	'{"enabled" = 0;"name" = "MUSIC";}' \
+# 	'{"enabled" = 0;"name" = "MOVIES";}' \
+# 	'{"enabled" = 0;"name" = "PRESENTATIONS";}' \
+# 	'{"enabled" = 1;"name" = "SPREADSHEETS";}' \
+# 	'{"enabled" = 0;"name" = "SOURCE";}';ok
+# running "Load new settings before rebuilding the index"
+# killall mds > /dev/null 2>&1;ok
+# running "Make sure indexing is enabled for the main volume"
+# sudo mdutil -i on / > /dev/null;ok
 #running "Rebuild the index from scratch"
 #sudo mdutil -E / > /dev/null;ok
 
@@ -883,11 +650,11 @@ defaults write com.apple.DiskUtility advanced-image-options -bool true;ok
 bot "Mac App Store"
 ###############################################################################
 
-running "Enable the WebKit Developer Tools in the Mac App Store"
-defaults write com.apple.appstore WebKitDeveloperExtras -bool true;ok
+#running "Enable the WebKit Developer Tools in the Mac App Store"
+#defaults write com.apple.appstore WebKitDeveloperExtras -bool true;ok
 
-running "Enable Debug Menu in the Mac App Store"
-defaults write com.apple.appstore ShowDebugMenu -bool true;ok
+#running "Enable Debug Menu in the Mac App Store"
+#defaults write com.apple.appstore ShowDebugMenu -bool true;ok
 
 ###############################################################################
 bot "Messages"
@@ -911,14 +678,14 @@ defaults write com.google.Chrome ExtensionInstallSources -array "https://gist.gi
 defaults write com.google.Chrome.canary ExtensionInstallSources -array "https://gist.githubusercontent.com/" "http://userscripts.org/*";ok
 
 ###############################################################################
-bot "SizeUp.app"
+#bot "SizeUp.app"
 ###############################################################################
+#
+#running "Start SizeUp at login"
+#defaults write com.irradiatedsoftware.SizeUp StartAtLogin -bool true;ok
 
-running "Start SizeUp at login"
-defaults write com.irradiatedsoftware.SizeUp StartAtLogin -bool true;ok
-
-running "Don’t show the preferences window on next start"
-defaults write com.irradiatedsoftware.SizeUp ShowPrefsOnNextStart -bool false;ok
+#running "Don’t show the preferences window on next start"
+#defaults write com.irradiatedsoftware.SizeUp ShowPrefsOnNextStart -bool false;ok
 
 
 ###############################################################################

@@ -1,36 +1,49 @@
 export LSCOLORS="exfxcxdxbxegedabagacad"
+export LS_COLORS='di=1;34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=34;46:cd=34;43:su=0;41:sg=0;46:tw=0;42:ow=0;43:'
+
 export CLICOLOR=true
+export DEFAULT_USER="antonsutton"
+export KEYTIMEOUT=1
 
 fpath=($ZSH/zsh/functions $fpath)
 
-if test -f $completion
-then
-  source $completion
-fi
+# if test -f $completion
+# then
+#   source $completion
+# fi
 
 autoload -U $ZSH/zsh/functions/*(:t)
 
 HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
+HISTSIZE=5000
+SAVEHIST=5000
+export HISTIGNORE="ls:cd:cd -:pwd:exit:date:* --help"
+
 
 setopt NO_BG_NICE # don't nice background tasks
 setopt NO_HUP
 setopt NO_LIST_BEEP
 setopt LOCAL_OPTIONS # allow functions to have local options
 setopt LOCAL_TRAPS # allow functions to have local traps
-setopt HIST_VERIFY
-setopt SHARE_HISTORY # share history between sessions ???
-setopt EXTENDED_HISTORY # add timestamps to history
 setopt PROMPT_SUBST
 setopt CORRECT
 setopt COMPLETE_IN_WORD
 setopt IGNORE_EOF
 
-setopt APPEND_HISTORY # adds history
 setopt INC_APPEND_HISTORY SHARE_HISTORY  # adds history incrementally and share it across sessions
-setopt HIST_IGNORE_ALL_DUPS  # don't record dupes in history
-setopt HIST_REDUCE_BLANKS
+
+# set some history options
+setopt append_history
+setopt extended_history
+setopt hist_expire_dups_first
+setopt hist_ignore_all_dups
+setopt hist_ignore_dups
+setopt hist_ignore_space
+setopt hist_reduce_blanks
+setopt hist_save_no_dups
+setopt hist_verify
+
+setopt share_history
 
 # don't expand aliases _before_ completion has finished
 #   like: git comm-[tab]
@@ -83,8 +96,14 @@ export LESS_TERMCAP_so=$'\E[38;5;246m'    # begin standout-mode - info box
 export LESS_TERMCAP_ue=$'\E[0m'           # end underline
 export LESS_TERMCAP_us=$'\E[04;38;5;146m' # begin underline
 
-
 if [ "$TERM" != "dumb" ]; then
     export LS_OPTIONS='--color=auto'
     eval `gdircolors ~/.dir_colors`
 fi
+
+# prompt config for powerlevel9k: https://github.com/bhilburn/powerlevel9k
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(time context dir vcs os_icon)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status virtualenv)
+# POWERLEVEL9K_MODE='awesome-fontconfig'
+POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
+POWERLEVEL9K_SHORTEN_STRATEGY="truncate_middle"

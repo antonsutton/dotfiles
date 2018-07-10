@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # bootstrap installs things.
-set -e
+#set -e
 
 source $(dirname $0)/lib
 
@@ -177,12 +177,12 @@ install_brew() {
   bot "installing homebrew command-line tools"
 
   require_brew grc
-  require_brew spark
+  #require_brew spark
   # Install GNU core utilities (those that come with OS X are outdated)
   # Don’t forget to add `$(brew --prefix coreutils)/libexec/gnubin` to `$PATH`.
   require_brew coreutils
   # Install some other useful utilities like `sponge`
-  # require_brew moreutils
+  require_brew moreutils
   # Install GNU `find`, `locate`, `updatedb`, and `xargs`, `g`-prefixed
   require_brew findutils
 
@@ -238,18 +238,20 @@ install_brew() {
   # require_brew memcached
   # require_brew nmap
   # require_brew node
-  require_brew nvm
+  #require_brew nvm
   # require_brew redis
   # better/more recent version of screen
-  require_brew homebrew/dupes/screen
-  require_brew tig
-  require_brew tree
-  require_brew ttyrec
+  #require_brew homebrew/dupes/screen
+  #require_brew tig
+  #require_brew tree
+  #require_brew ttyrec
   # better, more recent vim
-  require_brew vim --override-system-vi
-  require_brew watch
+  #require_brew vim --override-system-vi
+  #require_brew watch
   # Install wget with IRI support
-  require_brew wget --enable-iri
+  require_brew wget —-with-iri
+
+  require_brew mackup
 
   # bot "if you would like to start memcached at login, run this:"
   # echo "ln -sfv /usr/local/opt/memcached/*.plist ~/Library/LaunchAgents"
@@ -355,16 +357,21 @@ install_fonts() {
       font-source-code-pro
       font-anonymous-pro-for-powerline
       font-ubuntu-mono-powerline
+      font-meslo-lg-for-powerline
+      font-ubuntu
+      font-dejavu-sans-mono-for-powerline
+      font-dejavu-sans
+      font-camingocode
   )
 
   echo "installing fonts..."
   brew cask install --appdir="/Applications" ${fonts[@]}
 
   # curl -L --create-dirs --output "/tmp/Solarized Dark.itermcolors" https://github.com/altercation/solarized/raw/master/iterm2-colors-solarized/Solarized%20Dark.itermcolors
-  # open "/tmp/Solarized Dark.itermcolors"
+  #open ./terminal/Solarized Dark.itermcolors"
 
   # curl -L --create-dirs --output "/tmp/Solarized Dark.terminal"  https://github.com/tomislav/osx-terminal.app-colors-solarized/raw/master/Solarized%20Dark.terminal
-  # open "/tmp/Solarized Dark.terminal"
+  #open "./terminal/Solarized Dark.terminal"
 
 }
 
@@ -396,14 +403,29 @@ install_apps() {
     spectacle
     vlc
     xquartz
+    insync
+    hyperswitch
+    hyperdock
+    flux
+    xtrafinder
+    1password
+    calibre
+    hazel
+    evernote
+    plex-home-theater
+    qlcolorcode
+    qlstephen
+    qlmarkdown
+    quicklook-json
+    qlprettypatch
+    quicklook-csv
+    betterzipql
+    webpquicklook
+    suspicious-package
   )
 
 
 
-  #require_cask diffmerge
-  #require_cask github-desktop
-  #require_cask iterm2
-  #require_cask macvim
   #require_cask sizeup
   #require_cask simple-comic
   #require_cask sketchup
@@ -418,8 +440,6 @@ install_apps() {
   # require_cask betterzipql
   # require_cask webpquicklook
   # require_cask suspicious-package
-
-  qlmanage -r
 
   #require_cask sublime-text
 
@@ -446,11 +466,19 @@ install_apps() {
   # vagrant for running dev environments using docker images
   #require_cask vagrant # # | grep Caskroom | sed "s/.*'\(.*\)'.*/open \1\/Vagrant.pkg/g" | sh
 
-  brew cask install --appdir="/Applications" ${apps[@]}
+  #brew cask install --appdir="/Applications" ${apps[@]}
+  #require_cask ${apps[@]}
+
+  for app_name in "${apps[@]}"
+  do
+    require_cask $app_name
+  done
+
+  qlmanage -r
 
   bot "Alright, cleaning up homebrew cache..."
   # Remove outdated versions from the cellar
-  brew cleanup > /dev/null 2>&1
+  brew cask cleanup > /dev/null 2>&1
   bot "All clean"
 
 }
@@ -482,13 +510,13 @@ install_dotfiles () {
   done
 }
 
-# setup_gitconfig
-install_dotfiles
+#setup_gitconfig
+#install_dotfiles
 #install_brew
-#install_apps
-#install_fonts
-setup_misc
-setup_osx
+install_apps
+install_fonts
+#setup_misc
+#setup_osx
 
 # echo ''
 bot 'All installed!'

@@ -1,4 +1,4 @@
-#!/bin/sh
+  #!/bin/sh
 # Setup iTerm2 and Terminal
 set -x
 

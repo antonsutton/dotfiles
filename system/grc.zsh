@@ -1,5 +1,5 @@
 # GRC colorizes nifty unix tools all over the place
-if $(glc &>/dev/null)
+if $(grc &>/dev/null)
 then
-  source `brew --prefix`/etc/grc.bashrc
+  source $BREWROOT/etc/grc.bashrc
 fi

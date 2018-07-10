@@ -18,29 +18,31 @@ function pman() {
     man $1 -t | open -f -a Preview
 }
 
-## Open current directory
-alias oo='open .'
-
-## Quick-look a file (^C to close)
-alias ql='qlmanage -p 2>/dev/null'
-
-## Start a local SMTP server and dump emails sent to it to the console
-alias smtpconsole='python -m smtpd -n -c DebuggingServer localhost:1025'
-
-## Serve the current folder on port 80
-alias serve_this='python -m SimpleHTTPServer'
-
-## Highlight-aware less command
-alias hl='less -R'
-
-## Show history
-alias history='fc -l 1'
 
 ## Color grep results
 ## Examples: http://rubyurl.com/ZXv
 export GREP_OPTIONS='--color=auto'
 export GREP_COLOR='1;32'
 
-[[ -s /Users/antonsutton/.nvm/nvm.sh ]] && . /Users/antonsutton/.nvm/nvm.sh # This loads NVM
+# [[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh # Load autojump
 
-[[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh # Load autojump
+
+function bt() {
+  local output="Bluetooth restarted"
+
+  if [ $# -eq 1 ]; then
+    if [ $1 -eq "1" ]; then
+      sudo defaults write /Library/Preferences/com.apple.Bluetooth.plist ControllerPowerState 1
+      output="Bluetooth is on"
+    elif [ $1 -eq "0" ]; then
+      sudo defaults write /Library/Preferences/com.apple.Bluetooth.plist ControllerPowerState 0
+      output="Bluetooth is off"
+    fi;
+  fi;
+
+
+  sudo kextunload -b com.apple.iokit.BroadcomBluetoothHostControllerUSBTransport
+  sudo kextload -b com.apple.iokit.BroadcomBluetoothHostControllerUSBTransport
+
+  echo $output
+}

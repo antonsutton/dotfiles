@@ -45,7 +45,7 @@ function require_cask() {
     brew cask list $1 > /dev/null 2>&1 | true
     if [[ ${PIPESTATUS[0]} != 0 ]]; then
         action "brew cask install $1 $2"
-        brew cask install $1
+        brew cask install --appdir="/Applications" "$1"
         if [[ $? != 0 ]]; then
             error "failed to install $1! aborting..."
             # exit -1
@@ -92,7 +92,7 @@ function require_npm() {
     sourceNVM
     nvm use stable
     running "npm $1"
-    npm list -g --depth 0 | grep $1@ > /dev/null 
+    npm list -g --depth 0 | grep $1@ > /dev/null
     if [[ $? != 0 ]]; then
         action "npm install -g $1"
         npm install -g $1
@@ -102,9 +102,9 @@ function require_npm() {
 
 function require_apm() {
     running "checking atom plugin: $1"
-    apm list --installed --bare | grep $1@ > /dev/null 2>&1 | true 
+    apm list --installed --bare | grep $1@ > /dev/null 2>&1 | true
    # echo ${PIPESTATUS[0]}
-    #echo  $? 
+    #echo  $?
     if [[ ${PIPESTATUS[1]} != 0 ]]; then
     #if [[ $? != 0 ]]; then
         action "apm install $1"

@@ -1,0 +1,125 @@
+# zmodload zsh/zprof
+
+export ZPLUG_HOME=/usr/local/opt/zplug
+# source $ZPLUG_HOME/init.zsh
+
+# load zgen
+# source "${HOME}/.zgen/zgen.zsh"
+
+# shortcut to this dotfiles path is $ZSH
+# export ZSH=$HOME/.dotfiles
+
+# export BREWROOT=$(brew --prefix)
+
+# your project folder that we can `c [tab]` to
+export PROJECTS=~/Development
+
+# use .localrc for SUPER SECRET CRAP that you don't
+# want in your public, versioned repo.
+if [[ -a ~/.localrc ]]
+then
+  source ~/.localrc
+fi
+
+# all of our zsh files
+typeset -U config_files
+config_files=($ZSH/**/*.zsh)
+
+# load the path files
+for file in ${(M)config_files:#*/path.zsh}
+do
+  source $file
+done
+
+# load everything but the path and completion files
+for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}
+do
+  source $file
+done
+
+# initialize autocomplete here, otherwise functions won't be loaded
+autoload -U compinit
+compinit
+
+# load every completion after autocomplete loads
+for file in ${(M)config_files:#*/completion.zsh}
+do
+  source $file
+done
+
+unset config_files
+
+# # source $BREWROOT/share/antigen/antigen.zsh
+
+# # Load the oh-my-zsh's library.
+# # antigen use oh-my-zsh
+
+# # Bundles from the default repo (robbyrussell's oh-my-zsh).
+# # antigen bundle git
+# zplug "plugins/git",   from:oh-my-zsh
+# # antigen bundle pip
+# zplug "plugins/pip",   from:oh-my-zsh
+# # antigen bundle command-not-found
+# zplug "plugins/command-not-found",   from:oh-my-zsh
+# # antigen bundle history-substring-search
+# zplug "plugins/history-substring-search",   from:oh-my-zsh
+# # antigen bundle golang
+# zplug "plugins/golang",   from:oh-my-zsh
+# # antigen bundle brew
+# zplug "plugins/brew",   from:oh-my-zsh
+
+# # Syntax highlighting bundle.
+# # antigen bundle zsh-users/zsh-syntax-highlighting
+# zplug "zsh-users/zsh-syntax-highlighting"
+
+# # Load the theme.
+# # antigen theme bhilburn/powerlevel9k powerlevel9k
+# # antigen theme robbyrussell
+# zplug "bhilburn/powerlevel9k"
+
+# # Tell antigen that you're done.
+# # antigen apply
+
+# # TODO:zsh-history-substring-search
+# # plugins=(git ruby golang django scala gem history history-substring-search terminalapp brew nanoc z)
+
+# # Install plugins if there are plugins that have not been installed
+# if ! zplug check --verbose; then
+#     printf "Install? [y/N]: "
+#     if read -q; then
+#         echo; zplug install
+#     fi
+# fi
+
+# # Then, source plugins and add commands to $PATH
+# zplug load # --verbose
+
+# if the init scipt doesn't exist
+if ! zgen saved; then
+    echo "Creating a zgen save"
+
+    zgen oh-my-zsh
+
+    # plugins
+    zgen oh-my-zsh plugins/pip
+    zgen oh-my-zsh plugins/git
+    zgen oh-my-zsh plugins/sudo
+    zgen oh-my-zsh plugins/command-not-found
+    # zgen oh-my-zsh plugins/history-substring-search
+    zgen oh-my-zsh plugins/golang
+    # zgen oh-my-zsh plugins/brew
+
+    zgen load zsh-users/zsh-syntax-highlighting
+    zgen load zsh-users/zsh-history-substring-search
+
+    # completions
+    zgen load zsh-users/zsh-completions src
+
+    # theme
+    zgen load bhilburn/powerlevel9k powerlevel9k
+
+    # save all to init script
+    zgen save
+fi
+
+# zprof
